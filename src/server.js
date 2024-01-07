@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
+import {router as tweetRoutes} from "./routes/tweetRoutes.js";
 
 (async () => {
     // Create an Express application.
@@ -16,6 +17,8 @@ import express from "express";
     app.get("/", (req,res) => {
         res.status(200).send("Welcome to the Cloud!");
     });
+
+    app.use(tweetRoutes);
 
     app.listen(port, () => {
         console.log(`Server running http://localhost:${port}`);
