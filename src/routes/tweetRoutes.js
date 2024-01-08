@@ -1,47 +1,50 @@
 import express from "express";
-import {tweets} from "../tweets.js";
+import tweetService from "../services/tweetService.js";
 
 export const router = express.Router();
 
-// GET tweet by id
-router.get("/tweet/:id", (req, res) => {
-    let {id} = req.params;
+// Get tweet by id
+router.get( "/tweets/:id", async (req, res) => {
+    let { id } = req.params;
 
     if(!id) {
-        return res.status(400).send("Tweet id is required");
+        return res.status(400).send(`Tweet id is required`);
     }
 
-    const tweetById = tweets.find(t => t.id === parseInt(id))
+    const tweetById = await tweetService.findTweetById(id)
+
     if(!tweetById){
-        return res.status(404).send("Tweet not found");
+        return res.status(404).send(`Tweet not found`)
     }
 
     return res.status(200).send(tweetById);
-
 });
 
-// GET all tweets
-router.get("/tweets", (req,res) => {
-    let {author} = req.query;
-    let tweetList = tweets;
+// Get list of tweets
+router.get( "/tweets/", async (req, res) => {
+    let { author } = req.query;
 
-    if(author) {
-        tweetList = tweets.filter((tweet) => tweet.author === author);
+    let tweetList;
+
+    if(author){
+        tweetList = await tweetService.findTweetsByAuthor(author)
+    }else{
+        tweetList = await tweetService.findAll();
     }
 
     res.status(200).send(tweetList);
 });
 
-// POST tweet
-router.post("/tweets",(req,res) => {
-    let {author, text, imgUrl} = req.body;
+// Create a tweet
+router.post( "/tweets/", async (req, res) => {
+    // destruct request body
+    let { author, text, imgUrl } = req.body;
 
-    if(!author || !text) {
-        return res.status(400).send("Missing required tweet info.");
+    if(!author || !text){
+        return res.status(400).send("Missing required tweet information")
     }
 
-    const newTweet = {id: tweets.length, text, author, imgUrl};
-    tweets.push(newTweet);
+    const newTweet = await tweetService.createTweet(author, text, imgUrl)
 
-    res.status(200).send(newTweet);
-})
+    res.status(201).send(newTweet);
+} );
