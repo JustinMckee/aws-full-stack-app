@@ -1,14 +1,15 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import multer from "multer";
 import multerS3 from "multer-s3";
+import AWSXRay from 'aws-xray-sdk';
 
-const s3 = new S3Client({
+const s3 = AWSXRay.captureAWSv3Client(new S3Client({
     credentials: {
         accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
         secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY']
     },
     region: process.env['AWS_REGION']
-});
+}));
 
 const s3Storage = multerS3({
     s3: s3,
