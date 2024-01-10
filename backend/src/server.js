@@ -18,6 +18,7 @@ import cors from 'cors';
     app.use(bodyParser.json());
     app.use(express.urlencoded({extended: true})) // for request from forms-like data
     app.use(AWSXRay.express.openSegment('tweets-app'));
+    app.options('*', cors()) // include before other routes
     app.use(cors());
     
     // Root URI call
