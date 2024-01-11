@@ -11,7 +11,7 @@ import cors from 'cors';
     // Create an Express application.
     const app = express();
     // Default port to listen.
-    const port = 8080;
+    const port = process.env.PORT || 8080;
 
     // Use middleware so post bodies
     // are accessable as req.body.{{vairable}}
@@ -20,7 +20,7 @@ import cors from 'cors';
     app.use(AWSXRay.express.openSegment('tweets-app'));
     app.options('*', cors()) // include before other routes
     app.use(cors());
-    
+
     // Root URI call
     app.get("/", (req,res) => {
         res.status(200).send("Welcome to the Cloud!");
